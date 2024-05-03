@@ -15,6 +15,7 @@ namespace Wangle.EntityFrameworkCore
         public virtual DbSet<Designation> Designations { get; set; }
         
         public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<CourseParticipant> CourseParticipants { get; set; }
         
         public WangleDbContext(DbContextOptions<WangleDbContext> options)
             : base(options)
@@ -28,6 +29,11 @@ namespace Wangle.EntityFrameworkCore
             modelBuilder.Entity<Designation>(b =>
             {
                 b.HasIndex(e => new { e.Key }).IsUnique();
+            });
+            
+            modelBuilder.Entity<CourseParticipant>(b =>
+            {
+                b.HasIndex(e => new { e.CourseId, e.UserId }).HasFilter("[IsDeleted] = 0");
             });
         }
     }

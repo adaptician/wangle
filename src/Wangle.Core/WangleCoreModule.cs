@@ -8,6 +8,7 @@ using Abp.Zero.Configuration;
 using Wangle.Authorization.Roles;
 using Wangle.Authorization.Users;
 using Wangle.Configuration;
+using Wangle.Features;
 using Wangle.Localization;
 using Wangle.MultiTenancy;
 using Wangle.Timing;
@@ -35,6 +36,9 @@ namespace Wangle
             AppRoleConfig.Configure(Configuration.Modules.Zero().RoleManagement);
 
             Configuration.Settings.Providers.Add<AppSettingProvider>();
+            
+            // Configure feature providers
+            Configuration.Features.Providers.Add<WangleFeatureProvider>();
             
             Configuration.Localization.Languages.Add(new LanguageInfo("fa", "فارسی", "famfamfam-flags ir"));
             

@@ -2,6 +2,7 @@
 using Abp.Zero.EntityFrameworkCore;
 using Wangle.Authorization.Roles;
 using Wangle.Authorization.Users;
+using Wangle.Courses;
 using Wangle.Designations;
 using Wangle.MultiTenancy;
 
@@ -12,6 +13,8 @@ namespace Wangle.EntityFrameworkCore
         /* Define a DbSet for each entity of the application */
         
         public virtual DbSet<Designation> Designations { get; set; }
+        
+        public virtual DbSet<Course> Courses { get; set; }
         
         public WangleDbContext(DbContextOptions<WangleDbContext> options)
             : base(options)

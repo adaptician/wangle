@@ -111,7 +111,13 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                         'far fa-circle'
                     )
                 ])
-            ])
+            ]),
+            new MenuItem(
+                this.l('Simulations'),
+                '/app/simulations',
+                'fas fa-gamepad',
+                'Pages.Simulations'
+            ),
         ];
     }
 

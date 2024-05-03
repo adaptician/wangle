@@ -7,6 +7,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,6 +40,17 @@ import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
 
+
+// simulations
+import { SimulationsComponent } from './simulations/simulations.component';
+import { CreateSimulationDialogComponent } from './simulations/create-simulation/create-simulation-dialog.component';
+import { EditSimulationDialogComponent } from './simulations/edit-simulation/edit-simulation-dialog.component';
+import { ViewSimulationComponent } from './simulations/view-simulation/view-simulation.component';
+
+// signalr services
+import { ChatSignalrService } from './common/chat/chat-signalr.service';
+import { SceneCastingSignalrService } from './common/scene-casting/scene-casting-signalr.service';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -67,7 +79,14 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
         SidebarComponent,
         SidebarLogoComponent,
         SidebarUserPanelComponent,
-        SidebarMenuComponent
+        SidebarMenuComponent,
+
+
+        // simulations
+        SimulationsComponent,
+        CreateSimulationDialogComponent,
+        EditSimulationDialogComponent,
+        ViewSimulationComponent,
     ],
     imports: [
         CommonModule,
@@ -83,7 +102,11 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
         ServiceProxyModule,
         SharedModule,
         NgxPaginationModule,
+        TooltipModule.forRoot(),
     ],
-    providers: []
+    providers: [
+        ChatSignalrService,
+        SceneCastingSignalrService,
+    ]
 })
 export class AppModule {}

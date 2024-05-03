@@ -8,6 +8,8 @@ import { UsersComponent } from './users/users.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { RolesComponent } from 'app/roles/roles.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
+import {SimulationsComponent} from "@app/simulations/simulations.component";
+import {ViewSimulationComponent} from "@app/simulations/view-simulation/view-simulation.component";
 
 @NgModule({
     imports: [
@@ -21,7 +23,10 @@ import { ChangePasswordComponent } from './users/change-password/change-password
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Roles' }, canActivate: [AppRouteGuard] },
                     { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' }, canActivate: [AppRouteGuard] },
                     { path: 'about', component: AboutComponent, canActivate: [AppRouteGuard] },
-                    { path: 'update-password', component: ChangePasswordComponent, canActivate: [AppRouteGuard] }
+                    { path: 'update-password', component: ChangePasswordComponent, canActivate: [AppRouteGuard] },
+
+                    { path: 'simulations', component: SimulationsComponent, data: { permission: 'Pages.Simulations' }, canActivate: [AppRouteGuard] },
+                    { path: 'view-simulation/:id/:evid', component: ViewSimulationComponent, data: { permission: 'Pages.Simulations' }, canActivate: [AppRouteGuard] },
                 ]
             }
         ])

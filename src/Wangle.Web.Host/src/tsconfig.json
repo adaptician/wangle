@@ -21,7 +21,8 @@
       "@shared/*": [ "./shared/*" ],
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": ["../node_modules/@angular/*"],
-    }
+    },
+    "resolveJsonModule": true
   },
   "files": [
     "main.ts",

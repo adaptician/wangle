@@ -54,6 +54,9 @@
     <None Remove="external_libs\**" />
     <None Remove="node_modules\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\shared\colors\" />
+  </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="ComputeFilesToPublish">
     <Exec Command="ng build --prod" />
     <ItemGroup>

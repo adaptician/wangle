@@ -2,6 +2,8 @@ import { Component, Injector, OnInit, Renderer2 } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { SignalRAspNetCoreHelper } from '@shared/helpers/SignalRAspNetCoreHelper';
 import { LayoutStoreService } from '@shared/layout/layout-store.service';
+import {ChatSignalrService} from "@app/common/chat/chat-signalr.service";
+import {SceneCastingSignalrService} from "@app/common/scene-casting/scene-casting-signalr.service";
 
 @Component({
   templateUrl: './app.component.html'
@@ -12,7 +14,10 @@ export class AppComponent extends AppComponentBase implements OnInit {
   constructor(
     injector: Injector,
     private renderer: Renderer2,
-    private _layoutStore: LayoutStoreService
+    private _layoutStore: LayoutStoreService,
+    // TODO: this is breaking
+    // private _chatSignalrService: ChatSignalrService,
+    // private _sceneCastSignalrService: SceneCastingSignalrService,
   ) {
     super(injector);
   }
@@ -21,6 +26,10 @@ export class AppComponent extends AppComponentBase implements OnInit {
     this.renderer.addClass(document.body, 'sidebar-mini');
 
     SignalRAspNetCoreHelper.initSignalR();
+    // SignalRAspNetCoreHelper.initSignalR(() => {
+    //   this._chatSignalrService.init();
+    //   this._sceneCastSignalrService.init();
+    // });
 
     abp.event.on('abp.notifications.received', (userNotification) => {
       abp.notifications.showUiNotifyForUserNotification(userNotification);

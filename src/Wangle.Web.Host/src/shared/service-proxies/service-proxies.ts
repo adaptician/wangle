@@ -43,7 +43,7 @@ export class AccountServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -99,7 +99,7 @@ export class AccountServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -167,7 +167,7 @@ export class ConfigurationServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
             })
         };
 
@@ -231,7 +231,7 @@ export class RoleServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -343,7 +343,7 @@ export class RoleServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -730,6 +730,475 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
+export class SimulationServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    join(body: GetSimulationInput | undefined): Observable<SimulationDto> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Join";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processJoin(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processJoin(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationDto>;
+        }));
+    }
+
+    protected processJoin(response: HttpResponseBase): Observable<SimulationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SimulationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    leave(body: GetSimulationInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Leave";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLeave(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLeave(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processLeave(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    getParticpants(id: number | undefined): Observable<SimulationParticipantDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/GetParticpants?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetParticpants(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetParticpants(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationParticipantDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationParticipantDto[]>;
+        }));
+    }
+
+    protected processGetParticpants(response: HttpResponseBase): Observable<SimulationParticipantDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(SimulationParticipantDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    get(id: number | undefined): Observable<SimulationDto> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Get?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationDto>;
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<SimulationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SimulationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param keyword (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAll(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<SimulationDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/GetAll?";
+        if (keyword === null)
+            throw new Error("The parameter 'keyword' cannot be null.");
+        else if (keyword !== undefined)
+            url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<SimulationDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SimulationDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateSimulationDto | undefined): Observable<SimulationDto> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationDto>;
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<SimulationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SimulationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    update(body: SimulationEditDto | undefined): Observable<SimulationDto> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SimulationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SimulationDto>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<SimulationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SimulationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Simulation/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
 export class TenantServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -755,7 +1224,7 @@ export class TenantServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -990,7 +1459,7 @@ export class TenantServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -1058,7 +1527,7 @@ export class TokenAuthServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -1126,7 +1595,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -1182,7 +1651,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -1290,7 +1759,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
             })
         };
 
@@ -1342,7 +1811,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
             })
         };
 
@@ -1445,7 +1914,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
             })
         };
 
@@ -1497,7 +1966,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -1554,7 +2023,7 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -2093,6 +2562,57 @@ export interface ICreateRoleDto {
     grantedPermissions: string[] | undefined;
 }
 
+export class CreateSimulationDto implements ICreateSimulationDto {
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+
+    constructor(data?: ICreateSimulationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.initialSceneJson = _data["initialSceneJson"];
+            this.configJson = _data["configJson"];
+        }
+    }
+
+    static fromJS(data: any): CreateSimulationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSimulationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["initialSceneJson"] = this.initialSceneJson;
+        data["configJson"] = this.configJson;
+        return data;
+    }
+
+    clone(): CreateSimulationDto {
+        const json = this.toJSON();
+        let result = new CreateSimulationDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateSimulationDto {
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+}
+
 export class CreateTenantDto implements ICreateTenantDto {
     tenancyName: string;
     name: string;
@@ -2394,6 +2914,49 @@ export interface IGetRoleForEditOutput {
     role: RoleEditDto;
     permissions: FlatPermissionDto[] | undefined;
     grantedPermissionNames: string[] | undefined;
+}
+
+export class GetSimulationInput implements IGetSimulationInput {
+    id: number;
+
+    constructor(data?: IGetSimulationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): GetSimulationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetSimulationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): GetSimulationInput {
+        const json = this.toJSON();
+        let result = new GetSimulationInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IGetSimulationInput {
+    id: number;
 }
 
 export class Int64EntityDto implements IInt64EntityDto {
@@ -3140,6 +3703,222 @@ export class RoleListDtoListResultDto implements IRoleListDtoListResultDto {
 
 export interface IRoleListDtoListResultDto {
     items: RoleListDto[] | undefined;
+}
+
+export class SimulationDto implements ISimulationDto {
+    id: number;
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+
+    constructor(data?: ISimulationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.initialSceneJson = _data["initialSceneJson"];
+            this.configJson = _data["configJson"];
+        }
+    }
+
+    static fromJS(data: any): SimulationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SimulationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["initialSceneJson"] = this.initialSceneJson;
+        data["configJson"] = this.configJson;
+        return data;
+    }
+
+    clone(): SimulationDto {
+        const json = this.toJSON();
+        let result = new SimulationDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISimulationDto {
+    id: number;
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+}
+
+export class SimulationDtoPagedResultDto implements ISimulationDtoPagedResultDto {
+    items: SimulationDto[] | undefined;
+    totalCount: number;
+
+    constructor(data?: ISimulationDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(SimulationDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): SimulationDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SimulationDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+
+    clone(): SimulationDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new SimulationDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISimulationDtoPagedResultDto {
+    items: SimulationDto[] | undefined;
+    totalCount: number;
+}
+
+export class SimulationEditDto implements ISimulationEditDto {
+    id: number;
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+
+    constructor(data?: ISimulationEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.initialSceneJson = _data["initialSceneJson"];
+            this.configJson = _data["configJson"];
+        }
+    }
+
+    static fromJS(data: any): SimulationEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SimulationEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["initialSceneJson"] = this.initialSceneJson;
+        data["configJson"] = this.configJson;
+        return data;
+    }
+
+    clone(): SimulationEditDto {
+        const json = this.toJSON();
+        let result = new SimulationEditDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISimulationEditDto {
+    id: number;
+    name: string;
+    initialSceneJson: string;
+    configJson: string | undefined;
+}
+
+export class SimulationParticipantDto implements ISimulationParticipantDto {
+    id: number;
+    classroomId: number;
+    userId: number;
+
+    constructor(data?: ISimulationParticipantDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.classroomId = _data["classroomId"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): SimulationParticipantDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SimulationParticipantDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["classroomId"] = this.classroomId;
+        data["userId"] = this.userId;
+        return data;
+    }
+
+    clone(): SimulationParticipantDto {
+        const json = this.toJSON();
+        let result = new SimulationParticipantDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISimulationParticipantDto {
+    id: number;
+    classroomId: number;
+    userId: number;
 }
 
 export enum TenantAvailabilityState {

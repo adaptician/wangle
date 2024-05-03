@@ -1,0 +1,22 @@
+{
+	"triggers": [
+		{
+			"cause": "click",
+			"effects": [
+				{
+					"command": "scale",
+					"args": [ 
+						{"isVector3":true,"x":0,"y":1,"z":0}
+					 ],
+					"onCondition": [ "selected" ]
+				},
+				{
+					"command": "translate",
+					"args": [ 
+						{"isVector3":true,"x":1,"y":0,"z":0}
+					 ]
+				}
+			]
+		}
+	]
+}

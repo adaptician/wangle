@@ -5,6 +5,7 @@ using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Uow;
 using Abp.MultiTenancy;
+using Wangle.EntityFrameworkCore.Seed.Designations;
 using Wangle.EntityFrameworkCore.Seed.Host;
 using Wangle.EntityFrameworkCore.Seed.Tenants;
 
@@ -27,6 +28,9 @@ namespace Wangle.EntityFrameworkCore.Seed
             // Default tenant seed (in host database).
             new DefaultTenantBuilder(context).Create();
             new TenantRoleAndUserBuilder(context, 1).Create();
+            
+            // Custom seeding
+            new DesignationBuilder(context).CreateSeeds();
         }
 
         private static void WithDbContext<TDbContext>(IIocResolver iocResolver, Action<TDbContext> contextAction)

@@ -254,3 +254,5 @@ paket-files/
 src/Wangle.Web.Mvc/secrets.json
 src/Wangle.Web.Host/secrets.json
 src/Wangle.Migrator/secrets.json
+src/Wangle.Web.Host/App_Data/Logs/Logs.txt
+src/Wangle.Web.Host/.yarn/install-state.gz

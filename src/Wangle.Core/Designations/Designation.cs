@@ -4,6 +4,9 @@ using Abp.Domain.Entities.Auditing;
 
 namespace Wangle.Designations;
 
+/// <summary>
+/// TODO: document this - is this not supposed to be a role?
+/// </summary>
 [Table(nameof(Designation), Schema = EntitySchema.Simulation)]
 public class Designation : FullAuditedEntity
 {

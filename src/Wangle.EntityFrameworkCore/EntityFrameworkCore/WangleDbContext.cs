@@ -5,6 +5,7 @@ using Wangle.Authorization.Users;
 using Wangle.Courses;
 using Wangle.Designations;
 using Wangle.MultiTenancy;
+using Wangle.Simulations;
 
 namespace Wangle.EntityFrameworkCore
 {
@@ -16,6 +17,8 @@ namespace Wangle.EntityFrameworkCore
         
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<CourseParticipant> CourseParticipants { get; set; }
+        
+        public virtual DbSet<Simulation> Simulations { get; set; }
         
         public WangleDbContext(DbContextOptions<WangleDbContext> options)
             : base(options)

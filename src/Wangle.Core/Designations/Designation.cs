@@ -5,7 +5,7 @@ using Abp.Domain.Entities.Auditing;
 namespace Wangle.Designations;
 
 /// <summary>
-/// TODO: document this - is this not supposed to be a role?
+/// A designation is a role that is specific to a single simulation session, rather than system-wide.
 /// </summary>
 [Table(nameof(Designation), Schema = EntitySchema.Simulation)]
 public class Designation : FullAuditedEntity

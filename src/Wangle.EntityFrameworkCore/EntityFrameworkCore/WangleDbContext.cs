@@ -37,12 +37,12 @@ namespace Wangle.EntityFrameworkCore
             
             modelBuilder.Entity<CourseParticipant>(b =>
             {
-                b.HasIndex(e => new { e.CourseId, e.UserId }).HasFilter("[IsDeleted] = 0");
+                b.HasIndex(e => new { e.CourseId, e.UserId }).IsUnique().HasFilter("[IsDeleted] = 0");
             });
             
             modelBuilder.Entity<SimulationParticipant>(b =>
             {
-                b.HasIndex(e => new { e.SimulationId, e.UserId });
+                b.HasIndex(e => new { e.SimulationId, e.UserId }).IsUnique();
             });
         }
     }

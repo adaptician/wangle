@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssqldb
+spec:
+  type: LoadBalancer
+    ## The load balancer guarantees that the IP address persists after SQL Server instance is recovered.
+    ## By using the LoadBalancer service type, the SQL Server instance is accessible remotely (via the Internet) at port 1433.
+  ports:
+    - protocol: TCP
+      port: 14339
+      targetPort: 1433
+  selector:
+    app: mssqldb

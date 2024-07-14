@@ -1,25 +1,40 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-WORKDIR /src
-COPY ["src/Wangle.Web.Host/Wangle.Web.Host.csproj", "src/Wangle.Web.Host/"]
-COPY ["src/Wangle.Web.Core/Wangle.Web.Core.csproj", "src/Wangle.Web.Core/"]
-COPY ["src/Wangle.Application/Wangle.Application.csproj", "src/Wangle.Application/"]
-COPY ["src/Wangle.Core/Wangle.Core.csproj", "src/Wangle.Core/"]
-COPY ["src/Wangle.EntityFrameworkCore/Wangle.EntityFrameworkCore.csproj", "src/Wangle.EntityFrameworkCore/"]
-WORKDIR "/src/src/Wangle.Web.Host"
-RUN dotnet restore 
-
-WORKDIR /src
-COPY ["src/Wangle.Web.Host", "src/Wangle.Web.Host"]
-COPY ["src/Wangle.Web.Core", "src/Wangle.Web.Core"]
-COPY ["src/Wangle.Application", "src/Wangle.Application"]
-COPY ["src/Wangle.Core", "src/Wangle.Core"]
-COPY ["src/Wangle.EntityFrameworkCore", "src/Wangle.EntityFrameworkCore"]
-WORKDIR "/src/src/Wangle.Web.Host"
-RUN dotnet publish -c Release -o /publish --no-restore
-
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-EXPOSE 80
+FROM node:18 as node
+ARG NPM_RUN='publish-dev'
 WORKDIR /app
-COPY --from=build /publish .
+COPY  src/Wangle.Web.Host .
+RUN yarn install
+RUN yarn run $NPM_RUN
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+
+WORKDIR /src
+COPY  src/Wangle.Web.Host/Wangle.Web.Host.csproj  Wangle.Web.Host/
+COPY  src/Wangle.Web.Core/Wangle.Web.Core.csproj  Wangle.Web.Core/
+COPY  src/Wangle.Application/Wangle.Application.csproj  Wangle.Application/
+COPY  src/Wangle.Core/Wangle.Core.csproj  Wangle.Core/
+COPY  src/Wangle.EntityFrameworkCore/Wangle.EntityFrameworkCore.csproj  Wangle.EntityFrameworkCore/
+
+
+RUN dotnet restore "Wangle.Web.Host/Wangle.Web.Host.csproj"
+COPY /src .
+
+WORKDIR /src/Wangle.Web.Host
+RUN dotnet build "Wangle.Web.Host.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Wangle.Web.Host.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+COPY --from=node /app/wwwroot/dist /app/wwwroot/
 ENTRYPOINT ["dotnet", "Wangle.Web.Host.dll"]

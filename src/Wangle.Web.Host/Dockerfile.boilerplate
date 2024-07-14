@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+COPY ["src/Wangle.Web.Host/Wangle.Web.Host.csproj", "src/Wangle.Web.Host/"]
+COPY ["src/Wangle.Web.Core/Wangle.Web.Core.csproj", "src/Wangle.Web.Core/"]
+COPY ["src/Wangle.Application/Wangle.Application.csproj", "src/Wangle.Application/"]
+COPY ["src/Wangle.Core/Wangle.Core.csproj", "src/Wangle.Core/"]
+COPY ["src/Wangle.EntityFrameworkCore/Wangle.EntityFrameworkCore.csproj", "src/Wangle.EntityFrameworkCore/"]
+WORKDIR "/src/src/Wangle.Web.Host"
+RUN dotnet restore 
+
+WORKDIR /src
+COPY ["src/Wangle.Web.Host", "src/Wangle.Web.Host"]
+COPY ["src/Wangle.Web.Core", "src/Wangle.Web.Core"]
+COPY ["src/Wangle.Application", "src/Wangle.Application"]
+COPY ["src/Wangle.Core", "src/Wangle.Core"]
+COPY ["src/Wangle.EntityFrameworkCore", "src/Wangle.EntityFrameworkCore"]
+WORKDIR "/src/src/Wangle.Web.Host"
+RUN dotnet publish -c Release -o /publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+EXPOSE 80
+WORKDIR /app
+COPY --from=build /publish .
+ENTRYPOINT ["dotnet", "Wangle.Web.Host.dll"]

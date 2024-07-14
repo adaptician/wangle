@@ -72,6 +72,5 @@
     "typescript": "5.2.2",
     "webpack-bundle-analyzer": "^4.10.1"
   },
-  "angular-cli": {},
-  "packageManager": "yarn@4.2.1"
+  "angular-cli": {}
 }

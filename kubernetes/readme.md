@@ -67,7 +67,7 @@ If you are in a different namespace (eg. you switched and forgot to clear the se
 
 # Quickfire section
 
-kubectl config set-context --current --namespace=rootx
+kubectl config set-context --current --namespace=wangle
 
 kubectl apply -f .\kubernetes\networkpolicy.yaml
 

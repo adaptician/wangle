@@ -122,6 +122,19 @@
     <!-- CUSTOM -->
     <text name="SimulationsFeature">Simulations</text>
     <text name="SimulationsFeatureDescription">Create and join interactive 3D simulations</text>
-    <text name="PermissionSimulations">Simulations</text>
+    <text name="PermissionToSimulations">Simulations</text>
+    <text name="PermissionToSimulationsView">may view simulations</text>
+    
+    <text name="PermissionToSimulationsControl">Simulation Control</text>
+    <text name="PermissionToSimulationsControlRequest">may request simulation controls</text>
+    <text name="PermissionToSimulationsControlAssume">may assume simulation controls without approval</text>
+    <text name="PermissionToSimulationsControlInteract">may interact within a simulation</text>
+    
+    <text name="PermissionToSimulationsMediate">Simulation Mediation</text>
+    <text name="PermissionToSimulationsMediateView">may view simulations</text>
+    <text name="PermissionToSimulationsMediateParticipantGrant">may grant participant requests</text>
+    <text name="PermissionToSimulationsMediateParticipantEvict">may evict participant from simulations</text>
+    
+    
   </texts>
 </localizationDictionary>

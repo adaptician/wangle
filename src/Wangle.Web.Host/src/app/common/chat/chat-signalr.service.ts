@@ -80,11 +80,11 @@ export class ChatSignalrService extends AppComponentBase {
         // abp.event.on('app.chat.messageReceived', function(message) {
         //     abp.notify.success(`${message}`);
         // });
-
+        //
         // connection.on('groupNotice', message => {
         //     abp.event.trigger('app.chat.groupNotification', message);
         // });
-
+        //
         // abp.event.on('app.chat.groupNotification', function(message) {
         //     abp.notify.info(`${message}`);
         // });

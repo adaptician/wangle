@@ -38,3 +38,15 @@ spec:
         resources:
           requests:
             storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssqldb
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 1433
+      targetPort: 1433
+  selector:
+    app: mssqldb

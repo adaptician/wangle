@@ -10,7 +10,7 @@ public class WangleFeatureProvider : FeatureProvider
     {
         context.Create(
             WangleFeatures.SimulationsFeature,
-            defaultValue: "false",
+            defaultValue: "true",
             displayName: L("SimulationsFeature"),
             description: L("SimulationsFeatureDescription"),
             inputType: new CheckboxInputType()

@@ -443,7 +443,7 @@ export class ViewSimulationComponent extends AppComponentBase implements OnInit,
               this._chatSignalrService.leaveGroup(this._simulationGroupName, this.username, null);
               this._sceneCastingSignalrService.leaveGroup(this._simulationGroupName, this.username, null);
 
-              this._router.navigate(['app/classrooms']);
+              this._router.navigate(['app/simulations']);
           });
     }
 

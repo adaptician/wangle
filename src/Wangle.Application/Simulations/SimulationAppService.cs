@@ -34,9 +34,9 @@ public class SimulationAppService :
     {
         // get user from session
         var userId = AbpSession.GetUserId();
-        var user = await this._userManager.GetUserByIdAsync(userId);
+        var user = await _userManager.GetUserByIdAsync(userId);
 
-        var isStudent = await this._userManager.IsInRoleAsync(user, "Student");
+        var isStudent = await _userManager.IsInRoleAsync(user, "Student");
 
         // get Simulation
         var simulationTask = base.Repository.GetAll()
@@ -49,7 +49,7 @@ public class SimulationAppService :
             UserId = userId,
             DesignationId = isStudent ? (int) DesignationOption.Attendee : (int) DesignationOption.Facilitator
         };
-        var participantTask = this._simulationParticipantRepository.InsertOrUpdateAsync(particpant);
+        var participantTask = _simulationParticipantRepository.InsertOrUpdateAsync(particpant);
         
         await Task.WhenAll(simulationTask, participantTask);
 
@@ -58,26 +58,22 @@ public class SimulationAppService :
 
     public async Task LeaveAsync(GetSimulationInput input)
     {
-        // get user from session
         var userId = AbpSession.GetUserId();
         
-        // remove user to participant list
-        var particpant = new SimulationParticipant()
+        var participant = await _simulationParticipantRepository
+            .FirstOrDefaultAsync(x => x.SimulationId == input.Id && x.UserId == userId);
+
+        if (participant == null)
         {
-            SimulationId = input.Id,
-            UserId = userId
-        };
-        await this._simulationParticipantRepository.DeleteAsync(particpant);
+            return;
+        }
+        
+        await _simulationParticipantRepository.DeleteAsync(participant);
     }
 
     public async Task<IEnumerable<SimulationParticipantDto>> GetParticpants(GetSimulationInput input)
     {
-        // get user from session
-        var userId = AbpSession.GetUserId();
-        
-        // TODO: additional info based on role and designation
-
-        var participants = await this._simulationParticipantRepository.GetAll()
+        var participants = await _simulationParticipantRepository.GetAll()
             .Where(x => x.SimulationId == input.Id)
             .Select(x => ObjectMapper.Map<SimulationParticipantDto>(x))
             .ToListAsync();

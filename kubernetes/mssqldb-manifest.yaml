@@ -24,7 +24,7 @@ spec:
             - name: ACCEPT_EULA
               value: "Y"
             - name: SA_PASSWORD
-              value: RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm
+              value: G00dP@ssw0rd
           volumeMounts:
             - name: mssqldb-data
               mountPath: /var/opt/mssql # Default install path for SQL Server on Linux.

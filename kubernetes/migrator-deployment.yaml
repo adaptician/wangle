@@ -22,5 +22,5 @@ spec:
         - name: ASPNETCORE_Docker_Enabled
           value: "true"
         - name: ConnectionStrings__Default
-          value: Server=mssqlDb;Database=WangleDb;User=sa;Password=RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm;TrustServerCertificate=true
+          value: Server=mssqlDb;Database=WangleDb;User=sa;Password=G00dP@ssw0rd;TrustServerCertificate=true
       restartPolicy: Always

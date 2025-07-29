@@ -15,3 +15,4 @@ src/Wangle.Web.Host/.angular/cache
 src/Wangle.Web.Host/App_Data/Logs
 src/Wangle.Web.Host/node_modules
 src/Wangle.Web.Host/.yarn
+.idea

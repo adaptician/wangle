@@ -10,3 +10,8 @@ aspnet-core/src/Wangle.Migrator/Logs/Logs.txt
 aspnet-core/build/outputs/
 aspnet-core/docker/mvc/Mvc-Logs/
 
+.idea/.idea.Wangle/.idea
+src/Wangle.Web.Host/.angular/cache
+src/Wangle.Web.Host/App_Data/Logs
+src/Wangle.Web.Host/node_modules
+src/Wangle.Web.Host/.yarn

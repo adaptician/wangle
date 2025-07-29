@@ -1,0 +1,21 @@
+{
+	"triggers": [
+		{
+			"cause": "click",
+			"effects": [
+				{
+					"command": "rotate",
+					"args": [ 
+						{"isVector3":true,"x":0,"y":0,"z":1}
+					]
+				},
+				{
+					"command": "rotate",
+					"args": [ 
+						{"isVector3":true,"x":1,"y":0,"z":0}
+					]
+				}
+			]
+		}
+	]
+}

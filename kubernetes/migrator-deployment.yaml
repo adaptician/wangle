@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wangle-migrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wangle-migrator
+      network: wangle
+  template:
+    metadata:
+      labels:
+        app: wangle-migrator
+        network: wangle
+    spec:
+      containers:
+      - name: wangle-migrator
+        image: wangle.migrator
+        imagePullPolicy: Never
+        env:
+        - name: ASPNETCORE_Docker_Enabled
+          value: "true"
+        - name: ConnectionStrings__Default
+          value: Server=mssqlDb;Database=WangleDb;User=sa;Password=RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm;TrustServerCertificate=true
+      restartPolicy: Always

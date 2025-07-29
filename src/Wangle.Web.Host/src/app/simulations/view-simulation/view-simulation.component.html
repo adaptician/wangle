@@ -1,0 +1,162 @@
+<div class="panes-container">
+    <div class="classroom-panes">
+        <div #guidedPane class="classroom-pane open" [ngClass]="{ 'casting': amICasting }">
+            <div class="control-box">
+                <div #guidedConfigPanel class="config-panel"></div>
+                <div class="palette">
+                    <button class="btn-proto" (click)="dropBox()">
+                        <i class="fa fa-cube"></i>
+                    </button>
+                    <button class="btn-proto" (click)="dropSphere()">
+                        <i class="fa fa-circle"></i>
+                    </button>
+                    <button class="btn-proto" (click)="dropCylinder()">
+                        <i class="fa fa-eraser"></i>
+                    </button>
+                    <button class="btn-proto" (click)="dropCone()">
+                        <i class="fa fa-chevron-up"></i>
+                    </button>
+                    <button class="btn-proto" (click)="dropTorus()">
+                        <i class="fa fa-bullseye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="pane-box">
+                <div class="floating-controls">
+                    <div class="signal-marker btn-mini" 
+                        *ngIf="isCastConnected"
+                        [ngClass]="{ 'active': isSomeoneCasting, 'ready': !isSomeoneCasting }"
+                        (click)="tryToReconnectToCastingService()"
+                    >
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <div class="signal-marker btn-mini dead" 
+                        *ngIf="!isCastConnected"
+                        data-bs-toggle="tooltip"
+                        placement="bottom" 
+                        [tooltip]=" 'ClassroomCastingIsNotConnected' | localize "
+                        (click)="tryToReconnectToCastingService()"
+                    >
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <button class="btn btn-mini"
+                        data-bs-toggle="tooltip"
+                        placement="bottom" 
+                        [tooltip]="'ClassroomPopoutGuidedScene' | localize"
+                    >
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                    <button class="btn btn-mini" 
+                        (click)="leaveClassroom()"
+                        data-bs-toggle="tooltip"
+                        placement="bottom" 
+                        [tooltip]="'LeaveClassroom' | localize"
+                    >
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+                <canvas #guidedCanvas></canvas>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="anchored anchored--down">
+                <button class="btn btn-mini" 
+                    (click)="resetExploratoryScene()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomResetExploratoryScene' | localize"
+                >
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="btn btn-mini" 
+                    (click)="mirrorGuidedView()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomMirrorGuidedScene' | localize"
+                >
+                    <i class="fas fa-chevron-circle-down"></i>
+                </button>
+            </div>
+            <div class="anchored anchored--up">
+                <button class="btn btn-mini" 
+                    (click)="resetGuidedScene()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomResetGuidedScene' | localize"
+                >
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="btn btn-mini" 
+                    (click)="toggleCasting()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomStartCastingScene' | localize"
+                    *ngIf="!isSomeoneCasting"
+                >
+                    <i class="fas fa-play-circle"></i>
+                </button>
+                <button class="btn btn-mini" 
+                    (click)="toggleCasting()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomStopCastingScene' | localize"
+                    *ngIf="amICasting"
+                >
+                    <i class="fas fa-stop-circle"></i>
+                </button>
+                <!-- <button class="btn btn-mini" 
+                    [ngClass]="{'selected': objectMovementEnabled }"
+                    (click)="toggleEnableObjectMovement()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomEnableMoveObjects' | localize"
+                >
+                    <i class="fas fa-arrows-alt"></i>
+                </button>
+                <button class="btn btn-mini" 
+                    [ngClass]="{'selected': objectRotationEnabled }"
+                    (click)="toggleEnableObjectRotation()"
+                    data-bs-toggle="tooltip"
+                    placement="bottom" 
+                    [tooltip]="'ClassroomEnableRotateObjects' | localize"
+                >
+                    <i class="fas fa-reply-all"></i>
+                </button> -->
+            </div>
+            <div class="anchored">
+                <div class="info">{{ info }}</div>
+            </div>
+        </div>
+    
+        <div #exploratoryPane class="classroom-pane open">
+            <div #exploratoryConfigPanel class="config-panel"></div>
+            <div #exploratoryPalette class="palette"></div>
+            <canvas #exploratoryCanvas></canvas>
+        </div>
+    </div>
+</div>
+<div class="chat-box">
+    <div class="chat-bubbles">
+        <div class="chat-bubble"
+            [ngClass]="{ 'mine': isMyMessage(msg.username) }"
+            *ngFor="let msg of chatMessages"
+        >
+            <div class="meta">
+                <span class="handle">{{msg.username}}</span>
+                <span class="timestamp">{{getDateForDisplay(msg.timestamp)}}</span>
+            </div>
+            <div class="message">{{msg.message}}</div>
+        </div>
+    </div>
+    <div class="chat-control">
+        <input type="text"
+            autocomplete="off"
+            class="form-control"
+            name="chatMessage"
+            [placeholder]="'TypeMessageWithThreeDot' | localize"
+            [(ngModel)]="chatMessage"
+            (keyup.enter)="sendMessageToGroup()" 
+        />
+    </div>
+</div>

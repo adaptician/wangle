@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  mssqldb:
+      container_name: mssqldb_container
+      image: mcr.microsoft.com/mssql/server
+      ports:
+        - "1433:1433"
+      environment:
+        SA_PASSWORD: RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm
+        ACCEPT_EULA: "Y"
+      volumes:
+        - mssqldb-data:/mssql/data
+      networks:
+        - wangle
+
+  wangle.migrator:
+    image: ${DOCKER_REGISTRY-}wangle.migrator
+    container_name: wangle.migrator_container
+    build:
+      context: ../../
+      dockerfile: src/Wangle.Migrator/Dockerfile
+    environment:
+      - ASPNETCORE_Docker_Enabled=true
+      - ConnectionStrings__Default=Server=mssqlDb;Database=WangleDb;User=sa;Password=RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm;TrustServerCertificate=true
+    networks:
+      - wangle
+  
+  wangle.all:
+    image: ${DOCKER_REGISTRY-}wangle.all
+    container_name: wangle.all_container
+    build:
+      context: ../../
+      dockerfile: src/Wangle.Web.Host/Dockerfile
+    environment:
+      - ConnectionStrings__Default=Server=mssqlDb;Database=WangleDb;User=sa;Password=RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm;TrustServerCertificate=true
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - wangle
+
+volumes:
+  mssqldb-data:
+   name: "mssqldb-data"
+
+networks:
+  wangle:
+    external:
+      name: wangle

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mssqldb
+spec:
+  serviceName: "mssqldb"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mssqldb
+      network: wangle
+  template:
+    metadata:
+      labels:
+        app: mssqldb
+        network: wangle
+    spec:
+      containers:
+        - name: mssqldb
+          image: mcr.microsoft.com/mssql/server
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              value: RcjNvaGQwMQm44eJiaBbDyiMKaT4jndm
+          volumeMounts:
+            - name: mssqldb-data
+              mountPath: /var/opt/mssql # Default install path for SQL Server on Linux.
+              # This is used to create a sync between SQL files and the persisted volume.
+  volumeClaimTemplates:
+    - metadata:
+        name: mssqldb-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssqldb
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 1433
+      targetPort: 1433
+  selector:
+    app: mssqldb
